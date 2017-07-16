@@ -89,17 +89,17 @@ resource "aws_security_group" "bootstrap" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  egress {
-    protocol    = -1
-    from_port   = 0
-    to_port     = 0
+  ingress {
+    protocol    = "tcp"
+    from_port   = "${var.instance_port}"
+    to_port     = "${var.instance_port}"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
-    protocol    = "tcp"
-    from_port   = "${var.instance_port}"
-    to_port     = "${var.instance_port}"
+    protocol    = -1
+    from_port   = 0
+    to_port     = 0
     cidr_blocks = ["0.0.0.0/0"]
   }
 
@@ -123,7 +123,7 @@ resource "aws_instance" "team1" {
   subnet_id                   = "${element(split(",", module.network.public_subnet_ids), count.index)}"
   key_name                    = "${aws_key_pair.main.key_name}"
   vpc_security_group_ids      = ["${aws_security_group.bootstrap.id}"]
-  user_data                   = "${file("${path.cwd}/team1/user_data.txt")}"
+  user_data                   = "${file("${path.cwd}/user_data.txt")}"
   associate_public_ip_address = true
 
   lifecycle {
@@ -139,7 +139,7 @@ resource "aws_instance" "team2" {
   subnet_id                   = "${element(split(",", module.network.public_subnet_ids), count.index)}"
   key_name                    = "${aws_key_pair.main.key_name}"
   vpc_security_group_ids      = ["${aws_security_group.bootstrap.id}"]
-  user_data                   = "${file("${path.cwd}/team2/user_data.txt")}"
+  user_data                   = "${file("${path.cwd}/user_data.txt")}"
   associate_public_ip_address = true
 
   lifecycle {
@@ -155,7 +155,7 @@ resource "aws_instance" "team3" {
   subnet_id                   = "${element(split(",", module.network.public_subnet_ids), count.index)}"
   key_name                    = "${aws_key_pair.main.key_name}"
   vpc_security_group_ids      = ["${aws_security_group.bootstrap.id}"]
-  user_data                   = "${file("${path.cwd}/team3/user_data.txt")}"
+  user_data                   = "${file("${path.cwd}/user_data.txt")}"
   associate_public_ip_address = true
 
   lifecycle {
@@ -171,7 +171,7 @@ resource "aws_instance" "team4" {
   subnet_id                   = "${element(split(",", module.network.public_subnet_ids), count.index)}"
   key_name                    = "${aws_key_pair.main.key_name}"
   vpc_security_group_ids      = ["${aws_security_group.bootstrap.id}"]
-  user_data                   = "${file("${path.cwd}/team4/user_data.txt")}"
+  user_data                   = "${file("${path.cwd}/user_data.txt")}"
   associate_public_ip_address = true
 
   lifecycle {
@@ -187,7 +187,7 @@ resource "aws_instance" "team5" {
   subnet_id                   = "${element(split(",", module.network.public_subnet_ids), count.index)}"
   key_name                    = "${aws_key_pair.main.key_name}"
   vpc_security_group_ids      = ["${aws_security_group.bootstrap.id}"]
-  user_data                   = "${file("${path.cwd}/team5/user_data.txt")}"
+  user_data                   = "${file("${path.cwd}/user_data.txt")}"
   associate_public_ip_address = true
 
   lifecycle {
@@ -195,6 +195,22 @@ resource "aws_instance" "team5" {
   }
 
   tags                        = "${merge(var.default_tags, map("Name", "ins-team5-${var.name}"))}"
+}
+
+resource "aws_instance" "demo" {
+  ami                         = "${module.ami.ami_id}"
+  instance_type               = "${var.instance_type}"
+  subnet_id                   = "${element(split(",", module.network.public_subnet_ids), count.index)}"
+  key_name                    = "${aws_key_pair.main.key_name}"
+  vpc_security_group_ids      = ["${aws_security_group.bootstrap.id}"]
+  user_data                   = "${file("${path.cwd}/user_data.txt")}"
+  associate_public_ip_address = true
+
+  lifecycle {
+    create_before_destroy = true
+  }
+
+  tags                        = "${merge(var.default_tags, map("Name", "ins-demo-${var.name}"))}"
 }
 
 output "config" {
@@ -205,6 +221,7 @@ Bootstrap IPs:
   2017 Team 3: ${aws_instance.team3.public_ip}
   2017 Team 4: ${aws_instance.team4.public_ip}
   2017 Team 5: ${aws_instance.team5.public_ip}
+  2017 Demo  : ${aws_instance.demo.public_ip}
 
 Add your private key and SSH into any private node via the Bootstrap host:
   ssh-add ${path.cwd}/../keys/10academy.key
@@ -229,4 +246,8 @@ output "team4_public_ip" {
 
 output "team5_public_ip" {
   value = "${aws_instance.team5.public_ip}"
+}
+
+output "demo_public_ip" {
+  value = "${aws_instance.demo.public_ip}"
 }

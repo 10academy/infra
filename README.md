@@ -13,4 +13,4 @@ $ make destroy ## Terraform destroy
 $ make plan ## Terraform plan
 
 ## Contributors
-Manny <ma@10academy.de>
+Manny <manny.acquah@10academy.org>

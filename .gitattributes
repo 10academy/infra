@@ -2,4 +2,5 @@
 **/secret.json filter=git-crypt diff=git-crypt
 **/*.key filter=git-crypt diff=git-crypt
 **/*.pub filter=git-crypt diff=git-crypt
+**/*.private filter=git-crypt diff=git-crypt
 **/*.plan filter=git-crypt diff=git-crypt

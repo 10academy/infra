@@ -4,7 +4,7 @@
 
 name                 = "10academy"
 region               = "eu-west-1"
-sub_domain           = "us-east-1.aws"
+sub_domain           = "2017"
 
 #--------------------------------------------------------------
 # Network

@@ -40,10 +40,10 @@ provider "cloudflare" {
   token = "${var.cloudflare_token}"
 }
 
-resource "cloudflare_record" "bootstrap_team_1" {
+resource "cloudflare_record" "demo" {
   domain = "${var.domain}"
-  name   = "team1.${var.domain}"
+  name   = "demo.${var.domain}"
   type   = "A"
   ttl    = "300"
-  value  = "${data.terraform_remote_state.aws_2017.team1_public_ip}"
+  value  = "${data.terraform_remote_state.aws_2017.demo_public_ip}"
 }
